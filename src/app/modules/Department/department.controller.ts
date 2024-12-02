@@ -13,6 +13,17 @@ const createDepartments =catchAsync(async(req,res)=>{
     });
 });
 
+const getDepartments = catchAsync ( (async(req,res) =>{
+    const departments = await DepartmentServices.getAllDepartments();
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Departments retrieved successfully",
+        data: departments
+    });
+}))
+
 export const DepartmentController = {
     createDepartments,
+    getDepartments
 };

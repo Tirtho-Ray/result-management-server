@@ -5,7 +5,12 @@ const createDepartmentsIntoDB =async (payload:TDepartment) =>{
     const result = await Department.create(payload);
     return result;
 }
+const getAllDepartments = async()=>{
+    const result = await Department.find();
+    return result;
+}
 
 export const DepartmentServices = {
-    createDepartmentsIntoDB
+    createDepartmentsIntoDB,
+    getAllDepartments
 };

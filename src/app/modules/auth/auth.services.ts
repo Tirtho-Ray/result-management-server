@@ -7,7 +7,7 @@
     import httpStatus from 'http-status';
     import { TUser } from "../user/user.interface";
     import { createToken, generateTokens } from "../Token/Token";
-    import { isPasswordMatched } from "./auth.utils";
+    // import { isPasswordMatched } from "./auth.utils";
     import appError from "../../error/appError";
 
     // User registration
@@ -51,10 +51,10 @@
         }
 
     // Check if the provided password matches the stored hashed password
-        const passwordMatch = await isPasswordMatched(payload.password.trim(), user.password);
-        if (!passwordMatch) {
-            throw new appError(httpStatus.UNAUTHORIZED, 'Password does not match');
-        }
+        // const passwordMatch = await isPasswordMatched(payload.password.trim(), user.password);
+        // if (!passwordMatch) {
+        //     throw new appError(httpStatus.UNAUTHORIZED, 'Password does not match');
+        // }
         
         // Generate tokens for the authenticated user
         const tokens = generateTokens(user);

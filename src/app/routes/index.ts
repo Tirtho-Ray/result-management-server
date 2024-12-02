@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { AuthRoutes } from '../modules/auth/auth.routs';
 import { UserRoutes } from '../modules/user/user.router';
 import { DepartmentRouts } from '../modules/Department/department.route';
+import { SemesterRouts } from '../modules/semester/semester.route';
 
 
 
@@ -18,8 +19,12 @@ const modulesRoutes = [
     route: UserRoutes,
   },
   {
-    path: '/',
+    path: '/departments',
     route:DepartmentRouts ,
+  },
+  {
+    path: '/semesters',
+    route:SemesterRouts ,
   },
 ];
 
