@@ -6,7 +6,7 @@ export type TUser ={
     password?:string ;
     role:keyof typeof USER_ROLE;
     status: keyof typeof USER_STATUS  
-}
+};
 
 
 

@@ -1,1 +1,0 @@
-export const department = ["CST", "MT", "ET", "TT", "CT"] as const;
