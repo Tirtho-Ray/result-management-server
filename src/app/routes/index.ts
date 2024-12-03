@@ -5,9 +5,6 @@ import { DepartmentRouts } from '../modules/Department/department.route';
 import { SemesterRouts } from '../modules/semester/semester.route';
 import { SubjectRoutes } from '../modules/subject/subject.router';
 
-
-
-
 const router = Router();
 
 const modulesRoutes = [

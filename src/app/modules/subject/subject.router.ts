@@ -10,7 +10,7 @@ import { SubjectController } from "./subject.controller";
 const router = express.Router();
 
 router.post('/create-subject',validateRequest(SubjectValidations.createSubjectValidations),SubjectController.createSubject);
-router.post('/',SubjectController.getAllSubject);
+router.get('/',SubjectController.getAllSubject);
 
 
 

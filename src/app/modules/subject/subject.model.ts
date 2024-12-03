@@ -11,12 +11,22 @@ const subjectSchema = new Schema<TSubject>({
     required: true,
     unique: true, // Ensures each subject code is unique
   },
-  marks: {
+  mark: {
     type: Number,
     required: true,
   },
   credit: {
     type: Number,
+    required: true,
+  },
+  semesterId: {
+    type: Schema.Types.ObjectId,
+    ref: "Semester",
+    required: true,
+  },
+  departmentId: {
+    type: Schema.Types.ObjectId,
+    ref: "Department",
     required: true,
   },
 }, {

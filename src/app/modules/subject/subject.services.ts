@@ -7,9 +7,11 @@ const createSubjectsIntoDB = async(payload:TSubject)=>{
 };
 
 const getAllSubject = async() =>{
-    const result = await Subject.find();
+    const result = await Subject.find()
+    .populate("semesterId","_id name")
+    .populate("departmentId","_id name");
     return result;
-}
+};
 
 export const SubjectServices = {
     createSubjectsIntoDB,

@@ -6,7 +6,7 @@ const createSubjectValidations = z.object({
     .refine((value) => value.toString().length === 5, {
       message: "Subject code must be exactly 5 digits",
     }),
-  marks: z.number().min(0, "Marks must be a non-negative number"),
+  mark: z.number().min(0, "Marks must be a non-negative number"),
   credit: z.number().min(1, "Credit must be at least 1"),
 });
 
