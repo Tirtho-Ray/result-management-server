@@ -25,10 +25,10 @@ const getAllStudents = catchAsync(async (req, res) => {
   });
 });
 
-// Get student by roll
+// Get student by collageRoll or boardRoll
 const getStudentByRoll = catchAsync(async (req, res) => {
-  const { collageRoll,boardRoll } = req.params;
-  const student = await StudentServices.findStudent(collageRoll,boardRoll);
+  const { collageRoll, boardRoll } = req.params;
+  const student = await StudentServices.findStudent(collageRoll, boardRoll);
   if (!student) {
     return sendResponse(res, {
       statusCode: httpStatus.NOT_FOUND,
@@ -44,7 +44,7 @@ const getStudentByRoll = catchAsync(async (req, res) => {
   });
 });
 
-// Update student by roll
+// Update student by collageRoll
 const updateStudentByRoll = catchAsync(async (req, res) => {
   const { roll } = req.params;
   const updatedStudent = await StudentServices.updateStudentByRoll(roll, req.body);
@@ -63,7 +63,7 @@ const updateStudentByRoll = catchAsync(async (req, res) => {
   });
 });
 
-// Delete student by roll
+// Delete student by collageRoll
 const deleteStudentByRoll = catchAsync(async (req, res) => {
   const { roll } = req.params;
   const deletedStudent = await StudentServices.deleteStudentByRoll(roll);
