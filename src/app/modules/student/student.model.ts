@@ -7,7 +7,7 @@ const studentSchema = new Schema<TStudent>({
     type: String,
     required: true,
   },
-  roll:{
+  collageRoll:{
     type: String,
     required: true,
     unique: true,
@@ -15,6 +15,10 @@ const studentSchema = new Schema<TStudent>({
   session:{
     type: String,
     required: true
+  },
+  boardRoll:{
+    type: String,
+    unique: true,
   },
   registration:{
     type: String,
@@ -43,6 +47,16 @@ const studentSchema = new Schema<TStudent>({
     type: Schema.Types.ObjectId,
     ref: "Semester",
     required: true,
+  },
+  result: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Result",
+    },
+  ],
+  deleted: {
+    type: Boolean,
+    default: false,
   },
 }, {
   timestamps: true, 

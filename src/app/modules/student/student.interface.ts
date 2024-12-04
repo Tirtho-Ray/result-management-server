@@ -9,7 +9,8 @@ export type TResultSummary = {
 
 export type TStudent ={
     name:string;
-    roll:string;
+    collageRoll:string;
+    boardRoll:string;
     registration:string;
     session:string;
     departmentId:Types.ObjectId;
@@ -18,4 +19,6 @@ export type TStudent ={
     phone?: string;
     address?: string;
     dateOfBirth?: Date;
+    result:Types.ObjectId[];
+    deleted:boolean;
 };
