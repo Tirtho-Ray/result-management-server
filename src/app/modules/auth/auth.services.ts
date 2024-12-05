@@ -94,7 +94,6 @@
         }
     };
 
-
     export const AuthService = {
         register,
         login,
