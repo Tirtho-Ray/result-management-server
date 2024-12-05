@@ -7,7 +7,7 @@ const resultSchema = new Schema<TResult>(
   {
     studentId: {
       type: Schema.Types.ObjectId,
-      ref: "Student", // Reference to Student model
+      ref: "Students", // Reference to Student model
       required: true,
     },
     semesterId: {
@@ -28,13 +28,9 @@ const resultSchema = new Schema<TResult>(
         },
       },
     ],
-    totalMarks: {
-      type: String,
-      required: true,
-    },
     GPA: {
       type: String,
-      required: true,
+      // required: true,
     },
   },
   {

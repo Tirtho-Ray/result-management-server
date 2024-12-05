@@ -8,9 +8,8 @@ export type TResultSubject = {
   
   export type TResult = {
     studentId: Types.ObjectId;        
-    semesterId: Types.ObjectId;      
-    results: TResultSubject[]; 
-    totalMarks: string;        
+    semesterId: Types.ObjectId;
+    results: TResultSubject[];   
     GPA: string;               
   };
   
