@@ -10,8 +10,13 @@ const getAllSemesters = async()=>{
     const result = await Semester.find();
     return result;
 }
+const getSingleSemesters = async(id:string)=>{
+    const result = await Semester.findById(id);
+    return result;
+}
 
 export const SemesterServices = {
     createSemestersIntoDB,
-    getAllSemesters
+    getAllSemesters,
+    getSingleSemesters
 };

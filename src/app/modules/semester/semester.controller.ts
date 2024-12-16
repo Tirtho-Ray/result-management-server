@@ -23,8 +23,19 @@ const getSemesters = catchAsync ( (async(req,res) =>{
         data: departments
     });
 }))
+const getSingleSemesters = catchAsync ( (async(req,res) =>{
+    const {id} = req.params;
+    const departments = await SemesterServices.getSingleSemesters(id);
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Semester retrieved successfully",
+        data: departments
+    });
+}))
 
 export const SemesterController = {
     createSemesters,
-    getSemesters
+    getSemesters,
+    getSingleSemesters
 };

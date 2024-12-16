@@ -9,6 +9,7 @@
     import { createToken, generateTokens } from "../Token/Token";
     // import { isPasswordMatched } from "./auth.utils";
     import appError from "../../error/appError";
+import { isPasswordMatched } from "./auth.utils";
 
     // User registration
     const register = async (payload: TUser): Promise<any> => {
@@ -51,20 +52,20 @@
         }
 
     // Check if the provided password matches the stored hashed password
-        // const passwordMatch = await isPasswordMatched(payload.password.trim(), user.password);
-        // if (!passwordMatch) {
-        //     throw new appError(httpStatus.UNAUTHORIZED, 'Password does not match');
-        // }
+        const passwordMatch = await isPasswordMatched(payload.password.trim(), user.password);
+        if (!passwordMatch) {
+            throw new appError(httpStatus.UNAUTHORIZED, 'Password does not match');
+        }
         
         // Generate tokens for the authenticated user
         const tokens = generateTokens(user);
         return {
-            user: {
-                id: user._id,
-                email: user.email,
-                role: user.role,
-                status: user.status,
-            },
+            // user: {
+            //     id: user._id,
+            //     email: user.email,
+            //     role: user.role,
+            //     status: user.status,
+            // },
             ...tokens
         };
     };

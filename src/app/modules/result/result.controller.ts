@@ -15,6 +15,35 @@ const createResult =catchAsync(async(req,res)=>{
     });
 });
 
+// const createPost = catchAsync(async (req, res) => {
+//     const userId = req.user.id;
+//     const { title, content, categories, premium,keywords,image } = req.body;
+
+//     const payload = {
+//         user: userId,
+//         title,
+//         image,
+//         content,
+//         categories,
+//         premium,// Add 'premium' field
+//          keywords
+//     };
+
+//     const post = await PostServices.createPostIntoDB(payload);
+
+//     // Update the user's posts array
+//     await User.findByIdAndUpdate(userId, {
+//         $push: { posts: post._id }
+//     });
+
+//     sendResponse(res, {
+//         statusCode: httpStatus.CREATED,
+//         success: true,
+//         message: "Post created successfully",
+//         data: post,
+//     });
+// });
+
 const getResult = catchAsync ( (async(req,res) =>{
     const result = await ResultServices.getAllResults();
     sendResponse(res, {

@@ -23,7 +23,39 @@ const createSubject = catchAsync(async(req,res) =>{
     });
  });
 
+ const getSingleSubject = catchAsync(async (req, res) => {
+    const subject = await SubjectServices.getSingleSubject(req.params.id);
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Subject retrieved successfully",
+        data: subject,
+    });
+});
+
+const updateSubject = catchAsync(async (req, res) => {
+    const updatedSubject = await SubjectServices.updateSubject(req.params.id, req.body);
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Subject updated successfully",
+        data: updatedSubject,
+    });
+});
+
+const deleteSubject = catchAsync(async (req, res) => {
+    await SubjectServices.deleteSubject(req.params.id);
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Subject deleted successfully",
+    });
+});
+
  export const SubjectController = {
     createSubject,
-    getAllSubject
+    getAllSubject,
+    getSingleSubject,
+    updateSubject,
+    deleteSubject,
  };

@@ -14,8 +14,11 @@ router.get('/', StudentController.getAllStudents);
 // Get student by collageRoll or boardRoll
 router.get('/:collageRoll', StudentController.getStudentByRoll); // Use path params for specific student
 
+// get by id
+router.get('/:id', StudentController.getStudentById);
+
 // Update student by collageRoll
-router.put('/:roll', StudentController.updateStudentByRoll);
+router.put('/:id', StudentController.updateStudentById);
 
 // Delete student by collageRoll
 router.delete('/:roll', StudentController.deleteStudentByRoll);
