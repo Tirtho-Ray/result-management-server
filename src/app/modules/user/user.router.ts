@@ -10,7 +10,7 @@ import { USER_ROLE } from "./user.constant";
 
 const router = express.Router();
 
-router.post('/create-admin',auth(USER_ROLE.SUPER_ADMIN),validateRequest(UserValidations.createAdminValidations),UserController.createAdmin);
+router.post('/create-admin',validateRequest(UserValidations.createAdminValidations),auth(USER_ROLE.SUPER_ADMIN),UserController.createAdmin);
 
 
 

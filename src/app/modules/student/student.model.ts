@@ -1,7 +1,7 @@
 import mongoose, { model, Schema } from "mongoose";
 import { TStudent } from "./student.interface";
 
-// Regular expression to match 'CR-000001', 'CR-12345', etc.
+// Regular expression to match 'IM-000001', 'IM-12345', etc.
 const collageRollRegex = /^IMP-(\d{6})$/;
 
 const studentSchema = new Schema<TStudent>(
@@ -13,7 +13,6 @@ const studentSchema = new Schema<TStudent>(
     },
     collageRoll: {
       type: String,
-      unique: true,
     },
     session: {
       type: String,
@@ -21,19 +20,18 @@ const studentSchema = new Schema<TStudent>(
     },
     boardRoll: {
       type: String,
-      // unique: true,
+      unique: true,
     },
     registration: {
       type: String,
+      unique: true,
     },
     email: {
       type: String,
-      lowercase: true,
-      unique: true,
-      match: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
     },
     phone: {
       type: String,
+      unique: true,
     },
     dateOfBirth: {
       type: Date,
@@ -57,7 +55,7 @@ const studentSchema = new Schema<TStudent>(
         ref: "Result",
       },
     ],
-    deleted: {
+    isDeleted: {
       type: Boolean,
       default: false,
     },

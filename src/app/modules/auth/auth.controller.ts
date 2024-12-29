@@ -5,7 +5,7 @@ import sendResponse from "../../utils/sendResponse";
 import { AuthService } from "./auth.services";
 
 
-// User registration
+//  User registration
 const register = catchAsync(async (req: Request, res: Response) => {
   const { user, accessToken, refreshToken } = await AuthService.register(req.body);
 

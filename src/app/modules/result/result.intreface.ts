@@ -3,7 +3,7 @@ import { Types } from "mongoose";
 // result.interface.ts
 export type TResultSubject = {
     subjectId: string;
-    obtainedMarks: string;  
+    obtainedMarks: number;  
   };
   
   export type TResult = {

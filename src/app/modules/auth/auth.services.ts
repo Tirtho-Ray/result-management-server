@@ -9,7 +9,7 @@
     import { createToken, generateTokens } from "../Token/Token";
     // import { isPasswordMatched } from "./auth.utils";
     import appError from "../../error/appError";
-import { isPasswordMatched } from "./auth.utils";
+    import { isPasswordMatched } from "./auth.utils";
 
     // User registration
     const register = async (payload: TUser): Promise<any> => {
@@ -33,7 +33,7 @@ import { isPasswordMatched } from "./auth.utils";
         const tokens = generateTokens(newUser); // Generate tokens for the new user
 
         return {
-            user: newUser,
+            User:newUser,
             ...tokens
         };
     };

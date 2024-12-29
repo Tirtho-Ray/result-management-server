@@ -1,1 +1,1 @@
-export const Departments = ["CST", "MT", "ET", "TT", "CT"] as const;
+export const Departments = ["CST", "MT", "ET", "TT", "CT","Non_tech"] as const;

@@ -22,5 +22,5 @@ export const generateTokens = (user: any) => {
     const refreshToken = createToken(jwtPayload, config.JWT_REFRESH_SECRET, config.JWT_REFRESH_EXPIRES_IN);
     // console.log( config.JWT_REFRESH_SECRET)
 
-    return { accessToken, refreshToken };
+    return { accessToken, refreshToken,user };
 };

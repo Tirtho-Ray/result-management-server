@@ -10,15 +10,15 @@ export type TResultSummary = {
 export type TStudent ={
     name:string;
     collageRoll:string;
-    boardRoll:string;
-    registration:string;
+    boardRoll?:string;
+    registration?:string;
     session:string;
     departmentId:Types.ObjectId;
     semesterId:Types.ObjectId;
     email?: string;
     phone?: string;
     address?: string;
-    dateOfBirth?: Date;
-    result:Types.ObjectId[];
-    deleted:boolean;
+    dateOfBirth?: string;
+    result?:Types.ObjectId[];
+    isDeleted:boolean;
 };
