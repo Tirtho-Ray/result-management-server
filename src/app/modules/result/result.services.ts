@@ -6,24 +6,7 @@ const createResult = async (payload:TResult) =>{
     return result;
 }
 
-// const getAllResults = async () => {
-//     const results = await Result.find()
-//       .populate({
-//         path: "studentId",
-//         select: "name boardRoll departmentId",
-//         populate: { path: "departmentId", select: "name" }, // Populate the student's department
-//       })
-//       .populate({
-//         path: "semesterId",
-//         select: "name ", // Populate semester details
-//       })
-//       .populate({
-//         path: "results.subjectId",
-//         select: "name credit mark subCode", // Populate subject details inside results array
-//       });
-  
-//     return results;
-//   };
+
 
 const getAllResults = async (): Promise<(TResult & { GPA: string })[]> => {
   const results = await Result.find()
@@ -48,21 +31,23 @@ const getAllResults = async (): Promise<(TResult & { GPA: string })[]> => {
 
     result.results.forEach((subjectResult) => {
       const subject = subjectResult.subjectId as unknown as {
-        name: string;
-        credit: number;
-        mark: number;
-        subCode: string;
+        name?: string;
+        credit?: number;
+        mark?: number;
+        subCode?: string;
       };
 
       const obtainedMarks = subjectResult.obtainedMarks;
 
-      // Calculate grade point
-      const gradePoint = calculateGradePoint(obtainedMarks, subject.mark);
-      const credit = subject.credit;
+      if (subject && subject.credit && subject.mark) {
+        // Calculate grade point
+        const gradePoint = calculateGradePoint(obtainedMarks, subject.mark);
+        const credit = subject.credit;
 
-      // Update totals
-      totalCredits += credit;
-      totalWeightedGradePoints += gradePoint * credit;
+        // Update totals
+        totalCredits += credit;
+        totalWeightedGradePoints += gradePoint * credit;
+      }
     });
 
     // Calculate GPA
@@ -76,6 +61,7 @@ const getAllResults = async (): Promise<(TResult & { GPA: string })[]> => {
 
   return resultsWithGPA;
 };
+
 
 // Helper Function to Calculate Grade Point
 const calculateGradePoint = (obtainedMarks: number, totalMarks: number): number => {

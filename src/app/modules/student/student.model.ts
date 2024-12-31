@@ -34,7 +34,7 @@ const studentSchema = new Schema<TStudent>(
       unique: true,
     },
     dateOfBirth: {
-      type: Date,
+      type: String,
     },
     address: {
       type: String,

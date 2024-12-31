@@ -5,14 +5,14 @@ const createStudentValidations = z.object({
   name: z
     .string()
     .min(1, "Name is required")
-    .max(40, "Name should not exceed 40 characters"),
+    .max(50, "Name should not exceed 40 characters"),
   session: z.string().min(1, "Session is required"),
-  boardRoll:z.string().min(5,"BoardRoll Min 5 characters").max(6, "Board Max 6 characters").optional(),
-  registration: z.string().min(10,"Need 10 characters").max(10,"max 10 characters").optional(),
-  email: z.string().email().optional(),
-  phone: z.string().regex(/^\+?[0-9]\d{1,14}$/).optional(),
-  address: z.string().optional(),
-  dateOfBirth: z.string().optional(),
+  boardRoll:z.string().min(5,"BoardRoll Min 5 characters").max(7, "Board Max 7 characters"),
+  registration: z.string().min(10,"Need 10 characters").max(10,"max 10 characters"),
+  // email: z.string().email().optional(),
+  // phone: z.string().regex(/^\+?[0-9]\d{1,14}$/).optional(),
+  // address: z.string().optional(),
+  // dateOfBirth: z.string().optional(),
   departmentId: z.string().min(1, "Department ID is required"),
   semesterId: z.string().min(1, "Semester ID is required"),
 });
@@ -21,7 +21,7 @@ const updateStudentValidations = z.object({
   name: z
     .string()
     .min(1, "Name is required")
-    .max(40, "Name should not exceed 100 characters"),
+    .max(40, "Name should not exceed 100 characters").optional(),
   collageRoll: z.string().min(1, "CollageRoll number is required").optional(),
   session: z.string().min(1, "Session is required").optional(),
   registration: z.string().optional(),
