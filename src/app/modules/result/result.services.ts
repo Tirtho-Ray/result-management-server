@@ -1,10 +1,58 @@
+import { Subject } from "../subject/subject.model";
 import { TResult } from "./result.intreface";
 import { Result } from "./result.model";
 
-const createResult = async (payload:TResult) =>{
-    const result = await Result.create(payload);
-    return result;
-}
+// const createResult = async (payload:TResult) =>{
+//     const result = await Result.create(payload);
+//     return result;
+// }
+
+const createResult = async (payload: TResult) => {
+  // Validate if a result for the student and semester already exists
+  const existingResult = await Result.findOne({
+    studentId: payload.studentId,
+    semesterId: payload.semesterId,
+  });
+
+  if (existingResult) {
+    throw new Error("A result already exists for this student in the specified semester.");
+  }
+
+  // Fetch all subjects for the provided subject IDs
+  const subjectIds = payload.results.map((result) => result.subjectId);
+  const subjects = await Subject.find({ _id: { $in: subjectIds } });
+
+  if (subjects.length !== subjectIds.length) {
+    throw new Error("One or more subjects do not exist.");
+  }
+
+  // Validate that all subjects belong to the provided semester
+  for (const subject of subjects) {
+    if (!subject.semesterId) {
+      throw new Error(`Subject "${subject.name}" does not have a valid semester ID.`);
+    }
+
+    if (!subject.semesterId.equals(payload.semesterId)) {
+      throw new Error(`Subject "${subject.name}" does not belong to the semester "${payload.semesterId}".`);
+    }
+  }
+
+  // Validate that obtained marks do not exceed the subject's maximum marks
+  for (const result of payload.results) {
+    const subject = subjects.find((sub) => sub._id.equals(result.subjectId));
+    if (subject && result.obtainedMarks > subject.mark) {
+      throw new Error(
+        `Obtained marks (${result.obtainedMarks}) for subject "${subject.name}" exceed the maximum marks (${subject.mark}).`
+      );
+    }
+  }
+
+  // Create the result
+  const result = await Result.create(payload);
+  return result;
+};
+
+
 
 
 

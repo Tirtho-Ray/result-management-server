@@ -13,10 +13,4 @@ export type TResultSubject = {
     GPA: string;               
   };
   
-  export type TResult2 = {
-    studentId: Types.ObjectId;        
-    semesterId: Types.ObjectId;
-    results: TResultSubject[];   
-    GPA: string;               
-  };
-  
+

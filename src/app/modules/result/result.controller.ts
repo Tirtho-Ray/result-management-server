@@ -5,15 +5,25 @@ import { ResultServices } from "./result.services";
 
 
 
-const createResult =catchAsync(async(req,res)=>{
+// const createResult =catchAsync(async(req,res)=>{
+//     const result = await ResultServices.createResult(req.body);
+//     sendResponse(res, {
+//         statusCode: httpStatus.CREATED,
+//         success: true,
+//         message: " create result successfully",
+//         data: result
+//     });
+// });
+
+const createResult = catchAsync(async (req,res) => {
     const result = await ResultServices.createResult(req.body);
     sendResponse(res, {
-        statusCode: httpStatus.CREATED,
-        success: true,
-        message: " create result successfully",
-        data: result
+      statusCode: httpStatus.CREATED,
+      success: true,
+      message: "Result created successfully.",
+      data: result,
     });
-});
+  });
 
 // const createPost = catchAsync(async (req, res) => {
 //     const userId = req.user.id;
