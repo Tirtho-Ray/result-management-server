@@ -30,9 +30,6 @@ const createResult = async (payload: TResult) => {
   if (subjects.length !== subjectIds.length) {
     throw new Error("One or more subjects do not exist.");
   }
-  if (subjects.length !== subjectIds.length) {
-    throw new Error("One or more subjects do not exist.");
-  }
 
   // Validate that all subjects belong to the provided semester
   for (const subject of subjects) {
