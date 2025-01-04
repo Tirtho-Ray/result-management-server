@@ -1,3 +1,5 @@
+import httpStatus from "http-status";
+import appError from "../../error/appError";
 import { Subject } from "../subject/subject.model";
 import { TResult } from "./result.intreface";
 import { Result } from "./result.model";
@@ -15,8 +17,11 @@ const createResult = async (payload: TResult) => {
   });
 
   if (existingResult) {
-    throw new Error("A result already exists for this student in the specified semester.");
+    throw new appError(httpStatus.BAD_REQUEST,"A result already exists for this student in the specified semester.");
   }
+  // if (existingStudent) {
+  //   throw new appError(httpStatus.BAD_REQUEST, "Student with the same unique details already exists");
+  // }
 
   // Fetch all subjects for the provided subject IDs
   const subjectIds = payload.results.map((result) => result.subjectId);
@@ -124,11 +129,19 @@ const calculateGradePoint = (obtainedMarks: number, totalMarks: number): number 
   if (percentage >= 40) return 2.0; // D
   return 0.0; // F
 };
-
+const fetchSubjectsBySemester = async (semesterId: string) => {
+  try {
+    const subjects = await Subject.find({ semesterId });
+    return subjects;
+  } catch (error) {
+    throw new Error("Failed to fetch subjects.");
+  }
+};
 
   
 
 export const ResultServices = {
     createResult,
-    getAllResults
+    getAllResults,
+    fetchSubjectsBySemester
 };

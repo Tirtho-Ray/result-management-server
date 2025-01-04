@@ -64,7 +64,33 @@ const getResult = catchAsync ( (async(req,res) =>{
     });
 }))
 
+/// Get subjects by semester controller
+const getSubjectsBySemester = catchAsync(async (req, res) => {
+    const { semesterId } = req.query;
+  
+    if (!semesterId) {
+      return res.status(400).json({ success: false, message: "Semester ID is required." });
+    }
+  
+    try {
+      const subjects = await ResultServices.fetchSubjectsBySemester(semesterId as string);
+      sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Subjects retrieved successfully.",
+        data: subjects,
+      });
+    } catch (error) {
+      sendResponse(res, {
+        statusCode: httpStatus.INTERNAL_SERVER_ERROR,
+        success: false,
+        message: error.message || "An error occurred while fetching subjects.",
+      });
+    }
+  });
+  
 export const  ResultController= {
     createResult,
-    getResult
+    getResult,
+    getSubjectsBySemester
 };
