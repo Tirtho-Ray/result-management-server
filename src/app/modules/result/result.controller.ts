@@ -77,6 +77,8 @@ const getResultByBoardRollAndSemester = catchAsync(async (req, res) => {
       });
     }
   });
+
+  
   
   
 export const  ResultController= {

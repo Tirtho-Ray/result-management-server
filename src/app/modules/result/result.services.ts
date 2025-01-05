@@ -3,7 +3,7 @@ import appError from "../../error/appError";
 import { Subject } from "../subject/subject.model";
 import { TResult } from "./result.intreface";
 import { Result } from "./result.model";
-import { calculateGradePoint } from "./result.constant";
+import { calculateGradePointAndGrade } from "./result.constant";
 import { Student } from "../student/student.model";
 
 
@@ -71,7 +71,7 @@ const fetchSubjectsBySemester = async (semesterId: string) => {
 
 const getResultByBoardRollAndSemester = async (boardRoll: string, semesterId: string) => {
   // Find the student by boardRoll
-  const student = await Student.findOne({ boardRoll });
+  const student = await Student.findOne({ boardRoll }).select("name boardRoll departmentId");
 
   if (!student) {
     throw new appError(httpStatus.NOT_FOUND, "Student not found.");
@@ -100,11 +100,11 @@ const getResultByBoardRollAndSemester = async (boardRoll: string, semesterId: st
     throw new appError(httpStatus.NOT_FOUND, "Result not found for this student in the specified semester.");
   }
 
-  // Calculate GPA for the result
   let totalCredits = 0;
   let totalWeightedGradePoints = 0;
+  let isFail = false;
 
-  result.results.forEach((subjectResult) => {
+  const detailedResults = result.results.map((subjectResult) => {
     const subject = subjectResult.subjectId as unknown as {
       name?: string;
       credit?: number;
@@ -114,25 +114,51 @@ const getResultByBoardRollAndSemester = async (boardRoll: string, semesterId: st
 
     const obtainedMarks = subjectResult.obtainedMarks;
 
-    if (subject && subject.credit && subject.mark) {
-      // Calculate grade point
-      const gradePoint = calculateGradePoint(obtainedMarks, subject.mark);
-      const credit = subject.credit;
-
-      // Update totals
-      totalCredits += credit;
-      totalWeightedGradePoints += gradePoint * credit;
+    if (!subject || !subject.credit || !subject.mark) {
+      throw new appError(httpStatus.INTERNAL_SERVER_ERROR, "Invalid subject data.");
     }
+
+    // Calculate grade point and grade
+    const { gradePoint, grade } = calculateGradePointAndGrade(obtainedMarks, subject.mark);
+
+    // Check for failure
+    if (grade === "F") {
+      isFail = true;
+    }
+
+    // Update totals for GPA calculation
+    totalCredits += subject.credit;
+    totalWeightedGradePoints += gradePoint * subject.credit;
+
+    // Return detailed subject result
+    return {
+      
+      subjectName: subject.name,
+      subCode: subject.subCode,
+      credit: subject.credit,
+      obtainedMarks,
+      totalMarks: subject.mark,
+      gradePoint,
+      grade,
+    };
   });
 
-  // Calculate GPA
-  const GPA = totalCredits > 0 ? (totalWeightedGradePoints / totalCredits).toFixed(2) : "0.00";
+  // If any subject is failed, GPA is 0.00 and status is Fail
+  const GPA = isFail ? "0.00" : (totalWeightedGradePoints / totalCredits).toFixed(2);
+  const status = isFail ? "Fail" : "Pass";
 
   return {
-    ...result.toObject(),
-    GPA, // Include calculated GPA
+    studentName: student.name,
+    boardRoll: student.boardRoll,
+    semester: result.semesterId.name,
+    department: student.departmentId.name,
+    GPA,
+    status, // Include status (Pass/Fail)
+    results: detailedResults,
   };
 };
+
+
 
 
   
