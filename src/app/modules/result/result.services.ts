@@ -3,11 +3,10 @@ import appError from "../../error/appError";
 import { Subject } from "../subject/subject.model";
 import { TResult } from "./result.intreface";
 import { Result } from "./result.model";
+import { calculateGradePoint } from "./result.constant";
+import { Student } from "../student/student.model";
 
-// const createResult = async (payload:TResult) =>{
-//     const result = await Result.create(payload);
-//     return result;
-// }
+
 
 const createResult = async (payload: TResult) => {
   // Validate if a result for the student and semester already exists
@@ -19,10 +18,7 @@ const createResult = async (payload: TResult) => {
   if (existingResult) {
     throw new appError(httpStatus.BAD_REQUEST,"A result already exists for this student in the specified semester.");
   }
-  // if (existingStudent) {
-  //   throw new appError(httpStatus.BAD_REQUEST, "Student with the same unique details already exists");
-  // }
-
+ 
   // Fetch all subjects for the provided subject IDs
   const subjectIds = payload.results.map((result) => result.subjectId);
   const subjects = await Subject.find({ _id: { $in: subjectIds } });
@@ -61,8 +57,31 @@ const createResult = async (payload: TResult) => {
 
 
 
-const getAllResults = async (): Promise<(TResult & { GPA: string })[]> => {
-  const results = await Result.find()
+
+
+
+const fetchSubjectsBySemester = async (semesterId: string) => {
+  try {
+    const subjects = await Subject.find({ semesterId });
+    return subjects;
+  } catch (error) {
+    throw new Error("Failed to fetch subjects.");
+  }
+};
+
+const getResultByBoardRollAndSemester = async (boardRoll: string, semesterId: string) => {
+  // Find the student by boardRoll
+  const student = await Student.findOne({ boardRoll });
+
+  if (!student) {
+    throw new appError(httpStatus.NOT_FOUND, "Student not found.");
+  }
+
+  // Find the result for the student in the given semester
+  const result = await Result.findOne({
+    studentId: student._id,
+    semesterId,
+  })
     .populate({
       path: "studentId",
       select: "name boardRoll departmentId",
@@ -77,71 +96,49 @@ const getAllResults = async (): Promise<(TResult & { GPA: string })[]> => {
       select: "name credit mark subCode",
     });
 
-  // Calculate GPA for each result
-  const resultsWithGPA = results.map((result) => {
-    let totalCredits = 0;
-    let totalWeightedGradePoints = 0;
+  if (!result) {
+    throw new appError(httpStatus.NOT_FOUND, "Result not found for this student in the specified semester.");
+  }
 
-    result.results.forEach((subjectResult) => {
-      const subject = subjectResult.subjectId as unknown as {
-        name?: string;
-        credit?: number;
-        mark?: number;
-        subCode?: string;
-      };
+  // Calculate GPA for the result
+  let totalCredits = 0;
+  let totalWeightedGradePoints = 0;
 
-      const obtainedMarks = subjectResult.obtainedMarks;
-
-      if (subject && subject.credit && subject.mark) {
-        // Calculate grade point
-        const gradePoint = calculateGradePoint(obtainedMarks, subject.mark);
-        const credit = subject.credit;
-
-        // Update totals
-        totalCredits += credit;
-        totalWeightedGradePoints += gradePoint * credit;
-      }
-    });
-
-    // Calculate GPA
-    const GPA = totalCredits > 0 ? (totalWeightedGradePoints / totalCredits).toFixed(2) : "0.00";
-
-    return {
-      ...result.toObject(),
-      GPA, // Include calculated GPA
+  result.results.forEach((subjectResult) => {
+    const subject = subjectResult.subjectId as unknown as {
+      name?: string;
+      credit?: number;
+      mark?: number;
+      subCode?: string;
     };
+
+    const obtainedMarks = subjectResult.obtainedMarks;
+
+    if (subject && subject.credit && subject.mark) {
+      // Calculate grade point
+      const gradePoint = calculateGradePoint(obtainedMarks, subject.mark);
+      const credit = subject.credit;
+
+      // Update totals
+      totalCredits += credit;
+      totalWeightedGradePoints += gradePoint * credit;
+    }
   });
 
-  return resultsWithGPA;
+  // Calculate GPA
+  const GPA = totalCredits > 0 ? (totalWeightedGradePoints / totalCredits).toFixed(2) : "0.00";
+
+  return {
+    ...result.toObject(),
+    GPA, // Include calculated GPA
+  };
 };
 
-
-// Helper Function to Calculate Grade Point
-const calculateGradePoint = (obtainedMarks: number, totalMarks: number): number => {
-  const percentage = (obtainedMarks / totalMarks) * 100;
-
-  if (percentage >= 80) return 4.0; // A+
-  if (percentage >= 75) return 3.75; // A
-  if (percentage >= 70) return 3.5; // A-
-  if (percentage >= 65) return 3.25; // B+
-  if (percentage >= 60) return 3.0; // B
-  if (percentage >= 50) return 2.5; // C
-  if (percentage >= 40) return 2.0; // D
-  return 0.0; // F
-};
-const fetchSubjectsBySemester = async (semesterId: string) => {
-  try {
-    const subjects = await Subject.find({ semesterId });
-    return subjects;
-  } catch (error) {
-    throw new Error("Failed to fetch subjects.");
-  }
-};
 
   
 
 export const ResultServices = {
     createResult,
-    getAllResults,
-    fetchSubjectsBySemester
+    fetchSubjectsBySemester,
+    getResultByBoardRollAndSemester
 };
