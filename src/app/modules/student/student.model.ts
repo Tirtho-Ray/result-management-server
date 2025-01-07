@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose, { model, Schema } from "mongoose";
 import { TStudent } from "./student.interface";
 
@@ -101,7 +102,7 @@ studentSchema.pre("save", async function (next) {
       session.endSession();
 
       next();
-    } catch (error) {
+    } catch (error:any) {
       // Rollback the transaction if any error occurs
       await session.abortTransaction();
       session.endSession();

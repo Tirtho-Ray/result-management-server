@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from "http-status";
 import appError from "../../error/appError";
 import { Subject } from "../subject/subject.model";
@@ -69,6 +70,28 @@ const fetchSubjectsBySemester = async (semesterId: string) => {
   }
 };
 
+const getAllResults = async () => {
+  const results = await Result.find()
+    .populate({
+      path: "studentId",
+      select: "name boardRoll departmentId",
+      populate: { path: "departmentId", select: "name" },
+    })
+    .populate({
+      path: "semesterId",
+      select: "name",
+    })
+    .populate({
+      path: "results.subjectId",
+      select: "name credit mark subCode",
+    });
+
+  // Format results for better readability
+  
+ return results;
+};
+
+
 const getResultByBoardRollAndSemester = async (boardRoll: string, semesterId: string) => {
   // Find the student by boardRoll
   const student = await Student.findOne({ boardRoll }).select("name boardRoll departmentId");
@@ -132,7 +155,7 @@ const getResultByBoardRollAndSemester = async (boardRoll: string, semesterId: st
 
     // Return detailed subject result
     return {
-      
+      _id:subject._id,
       subjectName: subject.name,
       subCode: subject.subCode,
       credit: subject.credit,
@@ -148,23 +171,77 @@ const getResultByBoardRollAndSemester = async (boardRoll: string, semesterId: st
   const status = isFail ? "Fail" : "Pass";
 
   return {
+    _id: result._id,
     studentName: student.name,
     boardRoll: student.boardRoll,
     semester: result.semesterId.name,
     department: student.departmentId.name,
     GPA,
-    status, // Include status (Pass/Fail)
+    status, 
     results: detailedResults,
   };
 };
 
 
 
+const updateObtainedMarks = async (resultId: string, subjectId: string, obtainedMarks: number) => {
+  // Fetch the result to be updated and populate relevant fields
+  const result = await Result.findById(resultId)
+    .populate({
+      path: "studentId",
+      select: "name boardRoll departmentId",  // populate student details
+      populate: { path: "departmentId", select: "name" }
+    })
+    .populate({
+      path: "semesterId",
+      select: "name"  // populate semester details
+    })
+    // .populate({
+    //   path: "results.subjectId",  // populate subject details
+    //   select: "name subCode credit mark"
+    // });
 
-  
+  if (!result) {
+    throw new appError(httpStatus.NOT_FOUND, "Result not found.");
+  }
+
+  // Find the specific subject in the result
+  const subjectResult = result.results.find((res) => res.subjectId.toString() === subjectId);
+
+  if (!subjectResult) {
+    throw new appError(httpStatus.NOT_FOUND, "Subject not found in the result.");
+  }
+
+  // Fetch the subject to validate marks
+  const subject = await Subject.findById(subjectId);
+
+  if (!subject) {
+    throw new appError(httpStatus.NOT_FOUND, "Subject not found.");
+  }
+
+  // Ensure the obtained marks do not exceed the subject's maximum marks
+  if (obtainedMarks > subject.mark) {
+    throw new appError(httpStatus.BAD_REQUEST, `Obtained marks exceed the maximum marks for the subject "${subject.name}".`);
+  }
+
+  // Update the obtained marks in the result
+  subjectResult.obtainedMarks = obtainedMarks;
+
+  // Save the updated result
+  await result.save();
+
+  // Return the populated result with full subject and student details
+  return {
+    result
+  };
+};
+
+
 
 export const ResultServices = {
     createResult,
     fetchSubjectsBySemester,
-    getResultByBoardRollAndSemester
-};
+    getResultByBoardRollAndSemester,
+    getAllResults,
+    updateObtainedMarks
+}
