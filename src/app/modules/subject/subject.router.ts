@@ -11,9 +11,9 @@ import { USER_ROLE } from "../user/user.constant";
 const router = express.Router();
 
 router.post('/create-subject', auth(USER_ROLE.SUPER_ADMIN, USER_ROLE.ADMIN),validateRequest(SubjectValidations.createSubjectValidations),SubjectController.createSubject);
-router.get('/',SubjectController.getAllSubject);
-router.get("/:id", SubjectController.getSingleSubject);
-router.put("/:id", SubjectController.updateSubject);
-router.delete("/:id", SubjectController.deleteSubject);
+router.get('/',auth(USER_ROLE.SUPER_ADMIN, USER_ROLE.ADMIN),SubjectController.getAllSubject);
+router.get("/:id",auth(USER_ROLE.SUPER_ADMIN, USER_ROLE.ADMIN), SubjectController.getSingleSubject);
+router.put("/:id",auth(USER_ROLE.SUPER_ADMIN, USER_ROLE.ADMIN), SubjectController.updateSubject);
+router.delete("/:id",auth(USER_ROLE.SUPER_ADMIN, USER_ROLE.ADMIN), SubjectController.deleteSubject);
 
 export const SubjectRoutes = router;

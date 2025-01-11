@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "node api.js && tsc",
     "server": "nodemon ./dist/server.js",
     "lint": "eslint src --ignore-path .eslintignore --ext .ts",
     "start:dev": "ts-node-dev --respawn --transpile-only src/server.ts",

@@ -11,7 +11,7 @@ const router = express.Router();
 router.post('/create-student',validateRequest(StudentValidations.createStudentValidations), StudentController.createStudent);
 
 // Get all students
-router.get('/', //auth(USER_ROLE.SUPER_ADMIN, USER_ROLE.ADMIN),
+router.get('/', auth(USER_ROLE.SUPER_ADMIN, USER_ROLE.ADMIN),
  StudentController.getAllStudents);
 
 // Get student by collageRoll or boardRoll

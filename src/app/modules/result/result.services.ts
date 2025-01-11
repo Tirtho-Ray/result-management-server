@@ -184,57 +184,64 @@ const getResultByBoardRollAndSemester = async (boardRoll: string, semesterId: st
 
 
 
-const updateObtainedMarks = async (resultId: string, subjectId: string, obtainedMarks: number) => {
-  // Fetch the result to be updated and populate relevant fields
-  const result = await Result.findById(resultId)
-    .populate({
-      path: "studentId",
-      select: "name boardRoll departmentId",  // populate student details
-      populate: { path: "departmentId", select: "name" }
-    })
-    .populate({
-      path: "semesterId",
-      select: "name"  // populate semester details
-    })
-    // .populate({
-    //   path: "results.subjectId",  // populate subject details
-    //   select: "name subCode credit mark"
-    // });
+const updateMultipleObtainedMarks = async (resultId: string, updatedMarks: Array<{ subjectId: string; obtainedMarks: number }>) => {
+  // Fetch the result to be updated
+  const result = await Result.findById(resultId);
 
   if (!result) {
     throw new appError(httpStatus.NOT_FOUND, "Result not found.");
   }
 
-  // Find the specific subject in the result
-  const subjectResult = result.results.find((res) => res.subjectId.toString() === subjectId);
+  // Iterate over the updates and validate them
+  for (const update of updatedMarks) {
+    const { subjectId, obtainedMarks } = update;
 
-  if (!subjectResult) {
-    throw new appError(httpStatus.NOT_FOUND, "Subject not found in the result.");
+    // Find the specific subject in the result
+    const subjectResult = result.results.find((res) => res.subjectId.toString() === subjectId);
+
+    if (!subjectResult) {
+      throw new appError(httpStatus.NOT_FOUND, `Subject with ID ${subjectId} not found in the result.`);
+    }
+
+    // Fetch the subject to validate marks
+    const subject = await Subject.findById(subjectId);
+
+    if (!subject) {
+      throw new appError(httpStatus.NOT_FOUND, `Subject with ID ${subjectId} not found.`);
+    }
+
+    // Ensure the obtained marks do not exceed the subject's maximum marks
+    if (obtainedMarks > subject.mark) {
+      throw new appError(
+        httpStatus.BAD_REQUEST,
+        `Obtained marks (${obtainedMarks}) exceed the maximum marks (${subject.mark}) for the subject "${subject.name}".`
+      );
+    }
+
+    // Update the obtained marks
+    subjectResult.obtainedMarks = obtainedMarks;
   }
-
-  // Fetch the subject to validate marks
-  const subject = await Subject.findById(subjectId);
-
-  if (!subject) {
-    throw new appError(httpStatus.NOT_FOUND, "Subject not found.");
-  }
-
-  // Ensure the obtained marks do not exceed the subject's maximum marks
-  if (obtainedMarks > subject.mark) {
-    throw new appError(httpStatus.BAD_REQUEST, `Obtained marks exceed the maximum marks for the subject "${subject.name}".`);
-  }
-
-  // Update the obtained marks in the result
-  subjectResult.obtainedMarks = obtainedMarks;
 
   // Save the updated result
   await result.save();
 
-  // Return the populated result with full subject and student details
-  return {
-    result
-  };
+  // Return the updated result with full details
+  return await Result.findById(resultId)
+    .populate({
+      path: "studentId",
+      select: "name boardRoll departmentId",
+      populate: { path: "departmentId", select: "name" },
+    })
+    .populate({
+      path: "semesterId",
+      select: "name",
+    })
+    .populate({
+      path: "results.subjectId",
+      select: "name subCode credit mark",
+    });
 };
+
 
 
 
@@ -243,5 +250,5 @@ export const ResultServices = {
     fetchSubjectsBySemester,
     getResultByBoardRollAndSemester,
     getAllResults,
-    updateObtainedMarks
+    updateMultipleObtainedMarks
 }
